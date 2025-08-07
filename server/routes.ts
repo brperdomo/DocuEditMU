@@ -5,6 +5,21 @@ import { insertDocumentSchema, insertDocumentPageSchema, insertParagraphSchema }
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // Get sample document (for root path)
+  app.get("/api/documents", async (req, res) => {
+    try {
+      // Get the first document from storage (our sample document)
+      const allDocuments = Array.from((storage as any).documents.values());
+      const sampleDocument = allDocuments[0];
+      if (!sampleDocument) {
+        return res.status(404).json({ message: "No documents found" });
+      }
+      res.json(sampleDocument);
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
   // Get document by ID
   app.get("/api/documents/:id", async (req, res) => {
     try {

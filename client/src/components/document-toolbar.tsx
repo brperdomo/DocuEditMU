@@ -28,7 +28,7 @@ export default function DocumentToolbar({
   isPublishing
 }: DocumentToolbarProps) {
   return (
-    <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+    <div className="bg-white border-b border-docusign-medium-grey p-3 flex items-center justify-between shadow-sm">
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2">
           <button 
@@ -76,20 +76,20 @@ export default function DocumentToolbar({
       <div className="flex items-center space-x-3">
         <Button 
           variant="secondary"
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+          className="px-4 py-2 bg-docusign-medium-grey text-docusign-charcoal rounded-md hover:bg-docusign-light-grey transition-colors text-sm font-medium"
           onClick={onSaveDraft}
           disabled={isSaving}
         >
-          <i className="fas fa-save mr-2"></i>
+          <i className="fas fa-save mr-2 text-xs"></i>
           {isSaving ? 'Saving...' : 'Save Draft'}
         </Button>
         <Button 
-          className="px-4 py-2 bg-docusign-success text-white rounded-lg hover:bg-green-600 transition-colors font-medium"
+          className="px-4 py-2 bg-docusign-success text-white rounded-md hover:opacity-90 transition-all text-sm font-medium shadow-sm"
           onClick={onPublish}
           disabled={isPublishing}
         >
-          <i className="fas fa-check mr-2"></i>
-          {isPublishing ? 'Publishing...' : 'Publish Changes'}
+          <i className="fas fa-check mr-2 text-xs"></i>
+          {isPublishing ? 'Publishing...' : 'Publish'}
         </Button>
       </div>
     </div>

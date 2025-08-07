@@ -53,7 +53,7 @@ export default function DocumentViewer({
   };
 
   return (
-    <div className="flex-1 overflow-auto bg-gray-50 p-8">
+    <div className="flex-1 overflow-auto bg-docusign-light-grey p-6">
       <div className="max-w-4xl mx-auto relative">
         
         <FloatingEditToolbar

@@ -44,7 +44,7 @@ export default function DocumentEditor() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-docusign-light-grey flex items-center justify-center">
+      <div className="min-h-screen bg-docusign-surface flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-docusign-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-docusign-charcoal">Loading document...</p>
@@ -55,9 +55,9 @@ export default function DocumentEditor() {
 
   if (!document) {
     return (
-      <div className="min-h-screen bg-docusign-light-grey flex items-center justify-center">
+      <div className="min-h-screen bg-docusign-surface flex items-center justify-center">
         <div className="text-center">
-          <i className="fas fa-file-times text-4xl text-gray-400 mb-4"></i>
+          <i className="fas fa-file-times text-4xl text-docusign-medium-grey mb-4"></i>
           <p className="text-docusign-charcoal">Document not found</p>
         </div>
       </div>
@@ -65,7 +65,7 @@ export default function DocumentEditor() {
   }
 
   return (
-    <div className="font-inter bg-docusign-light-grey min-h-screen">
+    <div className="font-inter bg-docusign-surface min-h-screen">
       <AppHeader />
       
       <div className="flex h-screen">

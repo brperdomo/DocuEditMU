@@ -30,14 +30,16 @@
   --chart-4: hsl(147, 78%, 42%);
   --chart-5: hsl(341, 75%, 51%);
   
-  /* DocuSign Olive Design System Colors */
-  --docusign-blue: hsl(210, 100%, 40%);
-  --docusign-yellow: hsl(38, 100%, 55%);
-  --docusign-charcoal: hsl(218, 2%, 30%);
-  --docusign-light-grey: hsl(210, 14%, 97%);
-  --docusign-dark-grey: hsl(220, 5%, 17%);
-  --docusign-red: hsl(0, 84%, 60%);
-  --docusign-success: hsl(142, 76%, 36%);
+  /* DocuSign 2024 Updated Colors - Based on Olive Design System */
+  --docusign-blue: hsl(217, 89%, 42%); /* DocuSign Cobalt Blue - Primary */
+  --docusign-yellow: hsl(35, 100%, 55%); /* DocuSign Yellow - Accent */
+  --docusign-poppy: hsl(358, 100%, 65%); /* DocuSign Poppy Red - Brand accent */
+  --docusign-charcoal: hsl(215, 15%, 25%); /* Updated charcoal - darker */
+  --docusign-light-grey: hsl(210, 20%, 97%); /* Subtle blue tint */
+  --docusign-medium-grey: hsl(215, 10%, 85%); /* Medium grey for borders */
+  --docusign-dark-grey: hsl(215, 15%, 15%); /* Darker with blue tint */
+  --docusign-success: hsl(142, 71%, 45%); /* DocuSign success green */
+  --docusign-surface: hsl(210, 25%, 98%); /* Surface background */
   
   --font-sans: 'Inter', sans-serif;
   --font-serif: Georgia, serif;

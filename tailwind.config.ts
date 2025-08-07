@@ -51,14 +51,16 @@ export default {
           "4": "var(--chart-4)",
           "5": "var(--chart-5)",
         },
-        // DocuSign Olive Design System Colors
+        // DocuSign 2024 Updated Colors
         'docusign-blue': 'var(--docusign-blue)',
         'docusign-yellow': 'var(--docusign-yellow)',
+        'docusign-poppy': 'var(--docusign-poppy)',
         'docusign-charcoal': 'var(--docusign-charcoal)',
         'docusign-light-grey': 'var(--docusign-light-grey)',
+        'docusign-medium-grey': 'var(--docusign-medium-grey)',
         'docusign-dark-grey': 'var(--docusign-dark-grey)',
-        'docusign-red': 'var(--docusign-red)',
         'docusign-success': 'var(--docusign-success)',
+        'docusign-surface': 'var(--docusign-surface)',
       },
       fontFamily: {
         sans: ["var(--font-sans)"],

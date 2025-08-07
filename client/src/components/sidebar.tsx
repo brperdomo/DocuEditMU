@@ -57,9 +57,9 @@ export default function Sidebar({ documentId, currentPageNumber, onPageSelect }:
   };
 
   return (
-    <aside className="w-64 sidebar-gradient border-r border-gray-200 flex flex-col">
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-docusign-charcoal mb-3">Document Editor</h2>
+    <aside className="w-64 bg-docusign-surface border-r border-docusign-medium-grey flex flex-col">
+      <div className="p-4 border-b border-docusign-medium-grey">
+        <h2 className="text-base font-semibold text-docusign-charcoal mb-3">Document</h2>
         <div className="space-y-2 text-sm text-gray-600">
           <div className="flex justify-between">
             <span>{document?.filename || 'Document.pdf'}</span>
@@ -75,8 +75,8 @@ export default function Sidebar({ documentId, currentPageNumber, onPageSelect }:
         </div>
       </div>
       
-      <div className="p-4 border-b border-gray-200">
-        <h3 className="font-medium text-docusign-charcoal mb-3">Pages</h3>
+      <div className="p-4 border-b border-docusign-medium-grey">
+        <h3 className="text-sm font-semibold text-docusign-charcoal mb-3 uppercase tracking-wide">Pages</h3>
         <div className="space-y-2">
           {pages.map((page) => (
             <PageThumbnail
@@ -92,29 +92,29 @@ export default function Sidebar({ documentId, currentPageNumber, onPageSelect }:
         
         <Button
           variant="outline"
-          className="w-full mt-3 p-2 border-2 border-dashed border-gray-300 rounded text-gray-500 hover:border-docusign-blue hover:text-docusign-blue transition-colors text-sm"
+          className="w-full mt-3 p-2 border-2 border-dashed border-docusign-medium-grey rounded text-docusign-charcoal hover:border-docusign-blue hover:text-docusign-blue transition-colors text-sm"
           onClick={handleAddNewPage}
           disabled={addPageMutation.isPending}
         >
           <i className="fas fa-plus mr-2"></i>
-          {addPageMutation.isPending ? 'Adding...' : 'Add New Page'}
+          {addPageMutation.isPending ? 'Adding...' : 'Add Page'}
         </Button>
       </div>
       
       <div className="p-4">
-        <h3 className="font-medium text-docusign-charcoal mb-3">Quick Actions</h3>
-        <div className="space-y-2">
-          <button className="w-full text-left p-2 text-sm text-gray-600 hover:bg-gray-100 rounded transition-colors">
-            <i className="fas fa-copy mr-2"></i>Copy Selected Text
+        <h3 className="text-sm font-semibold text-docusign-charcoal mb-3 uppercase tracking-wide">Actions</h3>
+        <div className="space-y-1">
+          <button className="w-full text-left p-2 text-sm text-docusign-charcoal hover:bg-docusign-light-grey rounded transition-colors">
+            <i className="fas fa-copy mr-3 text-xs"></i>Copy Text
           </button>
-          <button className="w-full text-left p-2 text-sm text-gray-600 hover:bg-gray-100 rounded transition-colors">
-            <i className="fas fa-paste mr-2"></i>Paste Content
+          <button className="w-full text-left p-2 text-sm text-docusign-charcoal hover:bg-docusign-light-grey rounded transition-colors">
+            <i className="fas fa-paste mr-3 text-xs"></i>Paste
           </button>
-          <button className="w-full text-left p-2 text-sm text-gray-600 hover:bg-gray-100 rounded transition-colors">
-            <i className="fas fa-undo mr-2"></i>Undo Changes
+          <button className="w-full text-left p-2 text-sm text-docusign-charcoal hover:bg-docusign-light-grey rounded transition-colors">
+            <i className="fas fa-undo mr-3 text-xs"></i>Undo
           </button>
-          <button className="w-full text-left p-2 text-sm text-gray-600 hover:bg-gray-100 rounded transition-colors">
-            <i className="fas fa-redo mr-2"></i>Redo Changes
+          <button className="w-full text-left p-2 text-sm text-docusign-charcoal hover:bg-docusign-light-grey rounded transition-colors">
+            <i className="fas fa-redo mr-3 text-xs"></i>Redo
           </button>
         </div>
       </div>
