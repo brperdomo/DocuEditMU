@@ -12,14 +12,9 @@ import PDFFieldOverlay from "@/components/pdf-field-overlay";
 import DraggableField from "@/components/draggable-field";
 import AppHeader from "@/components/app-header";
 
-// Try using a version-specific CDN path for PDF.js worker
-// This approach uses jsdelivr which has better CORS headers
-try {
-  pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
-} catch (error) {
-  // Fallback to a working version
-  pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
-}
+// Use a proven working CDN version that supports CORS
+// This version is stable and works across different deployment platforms
+pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 export interface PDFField {
   id: string;

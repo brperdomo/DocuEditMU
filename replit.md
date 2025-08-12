@@ -14,6 +14,7 @@ This is a comprehensive PDF overlay editor built with React (frontend) and Expre
 - ✅ Applied DocuSign Olive design system with authentic 2024 color palette
 - ✅ Added export functionality for field configurations
 - ✅ Configured for deployment on multiple platforms (Vercel, Render, Docker)
+- ✅ Platform-agnostic PDF.js worker configuration for cross-platform compatibility
 
 ## User Preferences
 
