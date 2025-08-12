@@ -5,6 +5,15 @@ import { insertDocumentSchema, insertDocumentPageSchema, insertParagraphSchema }
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // Health check endpoint for deployment platforms
+  app.get("/api/health", (req, res) => {
+    res.status(200).json({ 
+      status: "ok", 
+      timestamp: new Date().toISOString(),
+      service: "document-editor"
+    });
+  });
+  
   // Get sample document (for root path)
   app.get("/api/documents", async (req, res) => {
     try {

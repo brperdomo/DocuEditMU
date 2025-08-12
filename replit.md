@@ -71,4 +71,4 @@ Preferred communication style: Simple, everyday language.
 - **Linting/Formatting**: ESLint and Prettier configurations
 - **Database Management**: Drizzle Kit for migrations and schema management
 - **Development Tools**: Optimized development environment configuration
-- **Deployment**: Vercel-optimized configuration with serverless functions
+- **Deployment**: Multi-platform deployment support (Vercel, Render, Docker)

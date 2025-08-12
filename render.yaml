@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: document-editor
+    runtime: node
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: document-editor-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: PORT
+        value: 10000
+    autoDeploy: true
+    
+databases:
+  - name: document-editor-db
+    databaseName: document_editor
+    plan: starter

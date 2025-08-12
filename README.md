@@ -261,6 +261,50 @@ vercel domains add yourdomain.com
 2. Publish directory: `dist`
 3. Add environment variables in Netlify dashboard
 
+#### Render (Recommended Alternative)
+
+Render provides simple deployment with automatic builds, managed PostgreSQL, and free tier options.
+
+**Method 1: Using render.yaml (Infrastructure as Code)**
+
+1. Push your code to GitHub (render.yaml is already configured)
+2. Visit [render.com](https://render.com) and connect your GitHub repository
+3. Render will automatically detect the `render.yaml` file and create:
+   - Web service for the application
+   - PostgreSQL database
+   - Environment variables
+4. Deploy with one click
+
+**Method 2: Manual Setup**
+
+1. **Create Web Service:**
+   - Build Command: `npm install && npm run build`
+   - Start Command: `npm start`
+   - Environment: Node
+   - Plan: Starter (free tier available)
+
+2. **Create PostgreSQL Database:**
+   - Database Name: `document_editor`
+   - Plan: Starter
+   - Copy the database URL
+
+3. **Configure Environment Variables:**
+   ```
+   DATABASE_URL=<your-render-postgres-url>
+   SESSION_SECRET=<generate-secure-random-string>
+   NODE_ENV=production
+   PORT=10000
+   ```
+
+4. **Deploy:** Render will automatically build and deploy
+
+**Render Benefits:**
+- Free tier with 750 hours/month
+- Automatic SSL certificates
+- Built-in PostgreSQL database
+- Zero-downtime deployments
+- Automatic builds from GitHub
+
 #### Railway
 ```bash
 # Install Railway CLI
@@ -278,15 +322,46 @@ railway up
 3. Set environment variables
 4. Deploy
 
-### Vercel Deployment Checklist
+#### Docker Deployment (Any Platform)
 
-Before deploying to Vercel, ensure:
+The included `Dockerfile` supports deployment on any container platform:
 
-- ✅ `vercel.json` configuration file is present
-- ✅ Environment variables are configured in Vercel dashboard
-- ✅ Database is set up (Vercel Postgres or external)
+```bash
+# Build the image
+docker build -t document-editor .
+
+# Run locally
+docker run -p 10000:10000 \
+  -e DATABASE_URL="your-database-url" \
+  -e SESSION_SECRET="your-secret" \
+  document-editor
+
+# Deploy to container platforms like:
+# - Google Cloud Run
+# - AWS ECS/Fargate
+# - Azure Container Instances
+# - Fly.io
+```
+
+### Deployment Platform Comparison
+
+| Platform | Free Tier | Database | Setup Complexity | Best For |
+|----------|-----------|----------|------------------|----------|
+| **Vercel** | Yes (Hobby) | Vercel Postgres | Medium | JAMstack, Serverless |
+| **Render** | Yes (750h/month) | Built-in PostgreSQL | Easy | Full-stack apps |
+| **Railway** | $5/month | Built-in PostgreSQL | Easy | Developers |
+| **Netlify** | Yes | External required | Medium | Static sites + Functions |
+
+### Deployment Checklist
+
+Before deploying to any platform, ensure:
+
+- ✅ Configuration files are present (`vercel.json`, `render.yaml`, `Dockerfile`)
+- ✅ Environment variables are configured in platform dashboard
+- ✅ Database is set up (platform-specific or external)
 - ✅ All dependencies are listed in `package.json`
 - ✅ Build scripts are properly configured
+- ✅ Health check endpoint is working (`/api/health`)
 
 ### Environment Variables for Production
 
