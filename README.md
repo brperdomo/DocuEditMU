@@ -146,6 +146,186 @@ npm run build
 npm start
 ```
 
+## Deployment
+
+### Deploy to Vercel (Recommended)
+
+Vercel provides seamless deployment with automatic builds, preview deployments, and global CDN.
+
+#### 1. Prepare for Vercel Deployment
+
+Create a `vercel.json` configuration file in the root directory:
+
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server/index.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "client/**/*",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server/index.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/client/dist/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
+```
+
+#### 2. Database Setup for Production
+
+**Option A: Vercel Postgres (Recommended)**
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Login to Vercel
+vercel login
+
+# Link project
+vercel link
+
+# Add Vercel Postgres
+vercel postgres create document-editor-db
+```
+
+**Option B: External PostgreSQL (Neon, Supabase, etc.)**
+- Create a PostgreSQL database on your preferred provider
+- Update environment variables in Vercel dashboard
+
+#### 3. Configure Environment Variables
+
+In your Vercel dashboard, add these environment variables:
+
+```
+DATABASE_URL=postgresql://username:password@host:5432/database
+SESSION_SECRET=your-super-secret-session-key-here
+NODE_ENV=production
+```
+
+#### 4. Deploy Methods
+
+**Method 1: GitHub Integration (Recommended)**
+
+1. Push your code to GitHub
+2. Visit [vercel.com](https://vercel.com)
+3. Import your GitHub repository
+4. Configure environment variables
+5. Deploy automatically
+
+**Method 2: Vercel CLI**
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+
+# Follow prompts to configure your deployment
+```
+
+**Method 3: One-Click Deploy**
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/document-editor)
+
+#### 5. Custom Domain (Optional)
+
+```bash
+# Add custom domain via CLI
+vercel domains add yourdomain.com
+
+# Or configure in Vercel dashboard
+```
+
+### Deploy to Other Platforms
+
+#### Netlify
+1. Build command: `npm run build`
+2. Publish directory: `dist`
+3. Add environment variables in Netlify dashboard
+
+#### Railway
+```bash
+# Install Railway CLI
+npm install -g @railway/cli
+
+# Login and deploy
+railway login
+railway init
+railway up
+```
+
+#### DigitalOcean App Platform
+1. Connect your GitHub repository
+2. Configure build command: `npm run build`
+3. Set environment variables
+4. Deploy
+
+### Vercel Deployment Checklist
+
+Before deploying to Vercel, ensure:
+
+- ✅ `vercel.json` configuration file is present
+- ✅ Environment variables are configured in Vercel dashboard
+- ✅ Database is set up (Vercel Postgres or external)
+- ✅ All dependencies are listed in `package.json`
+- ✅ Build scripts are properly configured
+
+### Environment Variables for Production
+
+Required environment variables for all deployment platforms:
+
+```bash
+DATABASE_URL=postgresql://username:password@host:5432/database
+SESSION_SECRET=your-super-secret-session-key-here
+NODE_ENV=production
+```
+
+Optional environment variables:
+
+```bash
+PORT=3000                    # Server port (auto-assigned on Vercel)
+CORS_ORIGIN=https://yourdomain.com  # CORS origin for production
+```
+
+### Post-Deployment Steps
+
+1. **Run Database Migrations**
+   ```bash
+   # For Vercel with Vercel Postgres
+   vercel env pull .env.local
+   npm run db:generate
+   npm run db:migrate
+   ```
+
+2. **Test the Deployment**
+   - Visit your deployed URL
+   - Test document creation and editing
+   - Verify database connectivity
+   - Check all API endpoints
+
+3. **Monitor Performance**
+   - Use Vercel Analytics for performance insights
+   - Monitor database usage and performance
+   - Set up error tracking (optional)
+
 ## Project Structure
 
 ```
