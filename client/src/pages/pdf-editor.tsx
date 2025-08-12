@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DndContext, DragEndEvent, DragOverlay, useSensor, useSensors, PointerSensor, KeyboardSensor, DragStartEvent } from "@dnd-kit/core";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
@@ -12,7 +12,7 @@ import DraggableField from "@/components/draggable-field";
 import AppHeader from "@/components/app-header";
 
 // Visual Document Component that looks like the Documents tab
-function DocumentViewer({ document, pages }: { document: any; pages: any[] }) {
+function DocumentViewer({ document, pages }: { document: any; pages: any }) {
   return (
     <div className="bg-white shadow-lg border border-gray-200 rounded-lg overflow-hidden" style={{ width: '612px', minHeight: '792px' }}>
       {/* Document Header */}
@@ -368,6 +368,17 @@ export default function PDFEditor() {
                       isSelected={field.id === selectedFieldId}
                       onClick={() => setSelectedFieldId(field.id)}
                       containerRef={pageRef}
+                      onUpdate={(updates) => {
+                        setFields(prev => prev.map(f => 
+                          f.id === field.id ? { ...f, ...updates } : f
+                        ));
+                      }}
+                      onDelete={() => {
+                        setFields(prev => prev.filter(f => f.id !== field.id));
+                        if (selectedFieldId === field.id) {
+                          setSelectedFieldId(null);
+                        }
+                      }}
                     />
                   ))}
                 </div>
@@ -380,6 +391,8 @@ export default function PDFEditor() {
                         isSelected={false}
                         onClick={() => {}}
                         containerRef={pageRef}
+                        onUpdate={() => {}}
+                        onDelete={() => {}}
                       />
                     </div>
                   ) : null}

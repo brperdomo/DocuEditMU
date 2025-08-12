@@ -1,27 +1,31 @@
 import { useDraggable } from '@dnd-kit/core';
 import { Button } from "@/components/ui/button";
 import { PDFField } from "@/pages/pdf-editor";
+import { useResize } from "@/hooks/use-resize";
 
 interface DraggableFieldProps {
   field: PDFField;
   isSelected: boolean;
   onClick: () => void;
   containerRef: React.RefObject<HTMLElement>;
+  onUpdate?: (updates: Partial<PDFField>) => void;
+  onDelete?: () => void;
+  onDelete?: () => void;
 }
 
 const getFieldColor = (type: PDFField['type'], assignee?: PDFField['assignee']) => {
   const colors = {
-    signature: 'border-yellow-400 bg-yellow-50',
-    date: 'border-blue-400 bg-blue-50',
-    name: 'border-green-400 bg-green-50',
-    initial: 'border-purple-400 bg-purple-50',
-    text: 'border-gray-400 bg-gray-50',
-    email: 'border-indigo-400 bg-indigo-50',
-    title: 'border-teal-400 bg-teal-50',
-    checkbox: 'border-red-400 bg-red-50'
+    signature: 'border-yellow-400 bg-yellow-100/70',
+    date: 'border-blue-400 bg-blue-100/70',
+    name: 'border-green-400 bg-green-100/70',
+    initial: 'border-purple-400 bg-purple-100/70',
+    text: 'border-gray-400 bg-gray-100/70',
+    email: 'border-indigo-400 bg-indigo-100/70',
+    title: 'border-teal-400 bg-teal-100/70',
+    checkbox: 'border-red-400 bg-red-100/70'
   };
   
-  return colors[type] || 'border-gray-400 bg-gray-50';
+  return colors[type] || 'border-gray-400 bg-gray-100/70';
 };
 
 const getAssigneeColor = (assignee?: PDFField['assignee']) => {
@@ -37,7 +41,9 @@ export default function DraggableField({
   field,
   isSelected,
   onClick,
-  containerRef
+  containerRef,
+  onUpdate,
+  onDelete
 }: DraggableFieldProps) {
   const {
     attributes,
@@ -75,6 +81,40 @@ export default function DraggableField({
     onClick();
   };
 
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (field.type === 'signature') {
+      const signature = prompt('Enter your signature:', field.value || '');
+      if (signature !== null && onUpdate) {
+        onUpdate({ value: signature });
+      }
+    } else if (field.type === 'text' || field.type === 'name' || field.type === 'email' || field.type === 'title') {
+      const value = prompt(`Enter ${field.type}:`, field.value || '');
+      if (value !== null && onUpdate) {
+        onUpdate({ value });
+      }
+    } else if (field.type === 'date') {
+      const date = prompt('Enter date (MM/DD/YYYY):', field.value || new Date().toLocaleDateString());
+      if (date !== null && onUpdate) {
+        onUpdate({ value: date });
+      }
+    } else if (field.type === 'initial') {
+      const initials = prompt('Enter initials:', field.value || '');
+      if (initials !== null && onUpdate) {
+        onUpdate({ value: initials });
+      }
+    }
+  };
+
+  const { handleMouseDown: handleResizeMouseDown, setInitialSize } = useResize(
+    (size) => {
+      if (onUpdate) {
+        onUpdate({ width: size.width, height: size.height });
+      }
+    },
+    containerRef
+  );
+
   return (
     <div
       ref={setNodeRef}
@@ -87,6 +127,7 @@ export default function DraggableField({
         group
       `}
       onClick={handleClick}
+      onDoubleClick={handleDoubleClick}
       {...listeners}
       {...attributes}
     >
@@ -163,7 +204,7 @@ export default function DraggableField({
             variant="ghost"
             onClick={(e) => {
               e.stopPropagation();
-              onDelete();
+              onDelete?.();
             }}
             className="w-6 h-6 p-0 hover:bg-red-100"
             title="Delete field"
@@ -175,10 +216,10 @@ export default function DraggableField({
         {/* Resize Handle */}
         {isSelected && (
           <div 
-            className="absolute -bottom-1 -right-1 w-3 h-3 bg-docusign-blue border border-white rounded cursor-nw-resize"
+            className="absolute -bottom-1 -right-1 w-3 h-3 bg-docusign-blue border border-white rounded cursor-nw-resize hover:bg-docusign-blue/80 transition-colors"
             onMouseDown={(e) => {
-              e.stopPropagation();
-              // Handle resize - would need more complex implementation
+              setInitialSize({ width: field.width, height: field.height });
+              handleResizeMouseDown(e);
             }}
           ></div>
         )}
