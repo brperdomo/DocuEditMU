@@ -12,8 +12,21 @@ import PDFFieldOverlay from "@/components/pdf-field-overlay";
 import DraggableField from "@/components/draggable-field";
 import AppHeader from "@/components/app-header";
 
-// Set up PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+// Set up PDF.js worker - use CDN with fallback
+import 'pdfjs-dist/web/pdf_viewer.css';
+
+if (typeof window !== 'undefined' && 'Worker' in window) {
+  try {
+    pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+  } catch (error) {
+    console.warn('Failed to load PDF worker from CDN, using local fallback');
+    // Fallback: disable worker for basic functionality
+    pdfjs.disableWorker = true;
+  }
+} else {
+  // No Worker support, disable worker
+  pdfjs.disableWorker = true;
+}
 
 export interface PDFField {
   id: string;
