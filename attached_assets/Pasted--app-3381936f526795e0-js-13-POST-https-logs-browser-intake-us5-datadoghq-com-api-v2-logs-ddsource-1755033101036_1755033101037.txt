@@ -1,0 +1,72 @@
+_app-3381936f526795e0.js:13  POST https://logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Afetch%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A585a810c&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=05c48672-cbc1-42ab-b672-b4a535ed5af3 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ _app-3381936f526795e0.js:13
+a @ _app-3381936f526795e0.js:40
+m @ _app-3381936f526795e0.js:40
+g @ _app-3381936f526795e0.js:40
+send @ _app-3381936f526795e0.js:40
+e.flush @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+e.notify @ _app-3381936f526795e0.js:15
+f @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+d @ _app-3381936f526795e0.js:1
+(anonymous) @ _app-3381936f526795e0.js:1
+n @ _app-3381936f526795e0.js:13Understand this error
+_app-3381936f526795e0.js:13 Fetch failed loading: POST "https://logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Afetch%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A585a810c&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=05c48672-cbc1-42ab-b672-b4a535ed5af3".
+(anonymous) @ _app-3381936f526795e0.js:13
+a @ _app-3381936f526795e0.js:40
+m @ _app-3381936f526795e0.js:40
+g @ _app-3381936f526795e0.js:40
+send @ _app-3381936f526795e0.js:40
+e.flush @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+e.notify @ _app-3381936f526795e0.js:15
+f @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+d @ _app-3381936f526795e0.js:1
+(anonymous) @ _app-3381936f526795e0.js:1
+n @ _app-3381936f526795e0.js:13
+_app-3381936f526795e0.js:13  POST https://logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Axhr%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A585a810c&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=ba612277-e130-4608-bbe0-7b739f77cdb4 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ _app-3381936f526795e0.js:13
+(anonymous) @ _app-3381936f526795e0.js:13
+S @ _app-3381936f526795e0.js:40
+(anonymous) @ _app-3381936f526795e0.js:40
+d @ _app-3381936f526795e0.js:1
+(anonymous) @ _app-3381936f526795e0.js:1
+Promise.then
+a @ _app-3381936f526795e0.js:40
+m @ _app-3381936f526795e0.js:40
+g @ _app-3381936f526795e0.js:40
+send @ _app-3381936f526795e0.js:40
+e.flush @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+e.notify @ _app-3381936f526795e0.js:15
+f @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+d @ _app-3381936f526795e0.js:1
+(anonymous) @ _app-3381936f526795e0.js:1
+n @ _app-3381936f526795e0.js:13Understand this error
+_app-3381936f526795e0.js:13 XHR failed loading: POST "https://logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Axhr%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A585a810c&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=ba612277-e130-4608-bbe0-7b739f77cdb4".
+(anonymous) @ _app-3381936f526795e0.js:13
+(anonymous) @ _app-3381936f526795e0.js:13
+S @ _app-3381936f526795e0.js:40
+(anonymous) @ _app-3381936f526795e0.js:40
+d @ _app-3381936f526795e0.js:1
+(anonymous) @ _app-3381936f526795e0.js:1
+Promise.then
+a @ _app-3381936f526795e0.js:40
+m @ _app-3381936f526795e0.js:40
+g @ _app-3381936f526795e0.js:40
+send @ _app-3381936f526795e0.js:40
+e.flush @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+e.notify @ _app-3381936f526795e0.js:15
+f @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+d @ _app-3381936f526795e0.js:1
+(anonymous) @ _app-3381936f526795e0.js:1
+n @ _app-3381936f526795e0.js:13

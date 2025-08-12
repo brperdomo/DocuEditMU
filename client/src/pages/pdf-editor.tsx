@@ -12,17 +12,14 @@ import PDFFieldOverlay from "@/components/pdf-field-overlay";
 import DraggableField from "@/components/draggable-field";
 import AppHeader from "@/components/app-header";
 
-// Configure PDF.js with a data URL worker to avoid external dependencies
-// This creates a minimal inline worker that satisfies PDF.js requirements
-const workerCode = `
-  // Minimal PDF.js worker implementation
-  self.onmessage = function(event) {
-    // Echo back messages to satisfy worker protocol
-    self.postMessage({ type: 'ready' });
-  };
-`;
-const blob = new Blob([workerCode], { type: 'application/javascript' });
-pdfjs.GlobalWorkerOptions.workerSrc = URL.createObjectURL(blob);
+// Try using a version-specific CDN path for PDF.js worker
+// This approach uses jsdelivr which has better CORS headers
+try {
+  pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+} catch (error) {
+  // Fallback to a working version
+  pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+}
 
 export interface PDFField {
   id: string;
@@ -309,6 +306,12 @@ export default function PDFEditor() {
                     <Document
                       file={pdfUrl}
                       onLoadSuccess={handleDocumentLoadSuccess}
+                      onLoadError={(error) => {
+                        console.error('PDF loading error:', error);
+                        alert('Failed to load PDF. Please try a different file or check if the file is corrupted.');
+                      }}
+                      loading={<div className="absolute inset-0 flex items-center justify-center bg-gray-100">Loading PDF...</div>}
+                      error={<div className="absolute inset-0 flex items-center justify-center bg-red-50 text-red-600">Failed to load PDF</div>}
                       className="relative"
                     >
                       <Page 

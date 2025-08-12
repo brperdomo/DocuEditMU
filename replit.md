@@ -1,8 +1,19 @@
-# Document Editor Application
+# PDF Overlay Editor Application
 
 ## Overview
 
-This is a full-stack document editor application built with React (frontend) and Express.js (backend). The application provides a collaborative document editing experience similar to DocuSign, allowing users to create, edit, and manage documents with multiple pages and paragraphs. The interface includes features like page thumbnails, document toolbars, floating edit toolbars, and real-time content editing capabilities.
+This is a comprehensive PDF overlay editor built with React (frontend) and Express.js (backend) that replicates DocuSign's UI/design/feel. The application focuses on PDF overlay functionality where users can drag and drop form fields (signatures, dates, text inputs, etc.) to precise positions on uploaded PDF documents. This creates a layer-based editing system for contract preparation similar to DocuSign's field placement capabilities.
+
+## Recent Changes (August 12, 2025)
+
+- ✅ Successfully resolved PDF.js worker configuration issues with inline blob worker
+- ✅ Built complete PDF overlay editor with drag/drop field positioning system  
+- ✅ Implemented 8 field types: signature, date, name, initial, text, email, job title, checkbox
+- ✅ Added properties panel for field configuration (position, size, assignee, required status)
+- ✅ Integrated multi-signer support with color-coded indicators
+- ✅ Applied DocuSign Olive design system with authentic 2024 color palette
+- ✅ Added export functionality for field configurations
+- ✅ Configured for deployment on multiple platforms (Vercel, Render, Docker)
 
 ## User Preferences
 
@@ -12,11 +23,13 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend Architecture
 - **Framework**: React with TypeScript using Vite as the build tool
+- **PDF Processing**: React-PDF with PDF.js for document rendering and interaction
+- **Drag/Drop System**: @dnd-kit for precise field positioning with collision detection
 - **Styling**: Tailwind CSS with shadcn/ui component library for consistent design
 - **State Management**: TanStack Query (React Query) for server state management and caching
 - **Routing**: Wouter for lightweight client-side routing
 - **Form Handling**: React Hook Form with Zod for validation
-- **Design System**: Custom DocuSign-inspired color scheme with Inter font family
+- **Design System**: DocuSign Olive design system with authentic 2024 color palette (#0066CC blue, #4B4B4D charcoal)
 
 ### Backend Architecture
 - **Framework**: Express.js with TypeScript
@@ -42,13 +55,16 @@ Preferred communication style: Simple, everyday language.
 
 ### Component Architecture
 - **UI Components**: Comprehensive shadcn/ui component library including dialogs, forms, buttons, etc.
-- **Custom Components**: 
-  - Document viewer with zoom and navigation controls
-  - Editable paragraph components with inline editing
-  - Floating toolbars for text formatting
-  - Page thumbnail sidebar for navigation
-  - Document-specific toolbar with save/publish actions
-- **Layout**: Responsive design with sidebar, main content area, and header navigation
+- **PDF Components**: 
+  - PDFFieldOverlay: Main PDF viewer with overlay field management
+  - DraggableField: Individual form field components with drag functionality
+  - PDFFieldPalette: Tool palette with 8 different field types
+  - Properties panel: Field configuration interface for position, size, assignee
+- **Custom Features**:
+  - Real-time coordinate tracking during drag operations
+  - Multi-signer support with color-coded field indicators
+  - Export functionality for field configuration data
+  - Responsive design with toolbar, PDF viewer, and properties panels
 
 ## External Dependencies
 
