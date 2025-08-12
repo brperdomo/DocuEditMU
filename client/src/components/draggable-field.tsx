@@ -5,11 +5,8 @@ import { PDFField } from "@/pages/pdf-editor";
 interface DraggableFieldProps {
   field: PDFField;
   isSelected: boolean;
-  onSelect: () => void;
-  onUpdate: (updates: Partial<PDFField>) => void;
-  onDelete: () => void;
-  pageSize: { width: number; height: number };
-  scale: number;
+  onClick: () => void;
+  containerRef: React.RefObject<HTMLElement>;
 }
 
 const getFieldColor = (type: PDFField['type'], assignee?: PDFField['assignee']) => {
@@ -39,11 +36,8 @@ const getAssigneeColor = (assignee?: PDFField['assignee']) => {
 export default function DraggableField({
   field,
   isSelected,
-  onSelect,
-  onUpdate,
-  onDelete,
-  pageSize,
-  scale
+  onClick,
+  containerRef
 }: DraggableFieldProps) {
   const {
     attributes,
@@ -55,11 +49,16 @@ export default function DraggableField({
     id: field.id,
   });
 
+  // Get container dimensions for percentage-based positioning
+  const containerRect = containerRef.current?.getBoundingClientRect();
+  const containerWidth = containerRect?.width || 612; // Default to standard document width
+  const containerHeight = containerRect?.height || 792; // Default to standard document height
+
   // Convert percentage positions to pixels
-  const pixelX = (field.x / 100) * pageSize.width * scale;
-  const pixelY = (field.y / 100) * pageSize.height * scale;
-  const pixelWidth = (field.width / 100) * pageSize.width * scale;
-  const pixelHeight = (field.height / 100) * pageSize.height * scale;
+  const pixelX = (field.x / 100) * containerWidth;
+  const pixelY = (field.y / 100) * containerHeight;
+  const pixelWidth = (field.width / 100) * containerWidth;
+  const pixelHeight = (field.height / 100) * containerHeight;
 
   const style = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
@@ -71,15 +70,9 @@ export default function DraggableField({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const handleDoubleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Enable inline editing for text fields
-    if (field.type === 'text' || field.type === 'name' || field.type === 'email' || field.type === 'title') {
-      const newValue = prompt(`Enter value for ${field.label}:`, field.value || '');
-      if (newValue !== null) {
-        onUpdate({ value: newValue });
-      }
-    }
+    onClick();
   };
 
   return (
@@ -93,11 +86,7 @@ export default function DraggableField({
         ${isDragging ? 'shadow-lg' : 'hover:shadow-md'}
         group
       `}
-      onClick={(e) => {
-        e.stopPropagation();
-        onSelect();
-      }}
-      onDoubleClick={handleDoubleClick}
+      onClick={handleClick}
       {...listeners}
       {...attributes}
     >
