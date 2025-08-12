@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import DocumentEditor from "@/pages/document-editor";
 import FormBuilder from "@/pages/form-builder";
+import PDFEditor from "@/pages/pdf-editor";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -44,6 +45,7 @@ function Router() {
       <Route path="/" component={HomeRedirect} />
       <Route path="/documents/:documentId" component={DocumentEditor} />
       <Route path="/form-builder" component={FormBuilder} />
+      <Route path="/pdf-editor" component={PDFEditor} />
       <Route component={NotFound} />
     </Switch>
   );
