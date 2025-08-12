@@ -12,9 +12,9 @@ import PDFFieldOverlay from "@/components/pdf-field-overlay";
 import DraggableField from "@/components/draggable-field";
 import AppHeader from "@/components/app-header";
 
-// Configure PDF.js worker with empty string to disable worker functionality
-// This allows basic PDF rendering without requiring external worker files
-pdfjs.GlobalWorkerOptions.workerSrc = '';
+// Configure PDF.js worker - use a reliable CDN source
+// This is required for PDF.js to function properly
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 export interface PDFField {
   id: string;
