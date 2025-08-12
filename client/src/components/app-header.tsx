@@ -1,62 +1,134 @@
+import { useState } from "react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function AppHeader() {
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
   return (
-    <header className="bg-white border-b border-docusign-medium-grey h-14 flex items-center justify-between px-6 relative z-50 shadow-sm">
+    <header className="bg-white border-b border-docusign-medium-grey h-16 flex items-center px-6 justify-between">
+      {/* Left side - Logo and Navigation */}
       <div className="flex items-center space-x-8">
-        <div className="flex items-center space-x-3">
-          {/* DocuSign Logo with updated 2024 branding */}
-          <div className="flex items-center">
-            <div className="w-7 h-7 bg-docusign-blue rounded flex items-center justify-center mr-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="white" className="font-bold">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-              </svg>
+        {/* DocuSign-style Logo */}
+        <Link href="/">
+          <div className="flex items-center space-x-2 cursor-pointer">
+            <div className="w-8 h-8 bg-docusign-blue rounded flex items-center justify-center">
+              <span className="text-white font-bold text-sm">D</span>
             </div>
-            <span className="text-lg font-semibold text-docusign-charcoal tracking-tight">DocuSign</span>
+            <span className="text-xl font-semibold text-docusign-charcoal">DocuSign</span>
           </div>
-        </div>
-        
-        {/* Updated navigation to match DocuSign 2024 refresh */}
-        <nav className="hidden md:flex items-center space-x-8">
-          <a href="#" className="text-sm font-medium text-docusign-charcoal hover:text-docusign-blue transition-colors">
-            Home
-          </a>
-          <a href="#" className="text-sm font-medium text-docusign-blue border-b-2 border-docusign-blue pb-2">
-            Agreements
-          </a>
-          <a href="#" className="text-sm font-medium text-docusign-charcoal hover:text-docusign-blue transition-colors">
-            Templates
-          </a>
-          <a href="#" className="text-sm font-medium text-docusign-charcoal hover:text-docusign-blue transition-colors">
-            Reports
-          </a>
-          <a href="#" className="text-sm font-medium text-docusign-charcoal hover:text-docusign-blue transition-colors">
-            Admin
-          </a>
+        </Link>
+
+        {/* Navigation Links */}
+        <nav className="flex items-center space-x-6">
+          <Link href="/">
+            <a className="text-sm font-medium text-docusign-charcoal hover:text-docusign-blue transition-colors">
+              Documents
+            </a>
+          </Link>
+          <Link href="/form-builder">
+            <a className="text-sm font-medium text-docusign-charcoal hover:text-docusign-blue transition-colors">
+              Form Builder
+            </a>
+          </Link>
         </nav>
       </div>
-      
-      <div className="flex items-center space-x-3">
-        {/* Updated "Start" button with DocuSign 2024 styling */}
-        <Button className="bg-docusign-blue text-white px-5 py-2 rounded-md text-sm font-semibold hover:bg-opacity-90 transition-all shadow-sm">
-          <i className="fas fa-plus mr-2 text-xs"></i>
-          Start
-        </Button>
-        
-        {/* Notifications */}
-        <button className="p-2 text-docusign-charcoal hover:text-docusign-blue hover:bg-docusign-surface rounded-md transition-colors">
-          <i className="fas fa-bell text-sm"></i>
-        </button>
-        
-        {/* Help */}
-        <button className="p-2 text-docusign-charcoal hover:text-docusign-blue hover:bg-docusign-surface rounded-md transition-colors">
-          <i className="fas fa-question-circle text-sm"></i>
-        </button>
-        
-        {/* Profile */}
-        <div className="w-8 h-8 bg-docusign-medium-grey rounded-full flex items-center justify-center hover:bg-docusign-light-grey cursor-pointer transition-colors">
-          <i className="fas fa-user text-docusign-charcoal text-xs"></i>
+
+      {/* Center - Search */}
+      <div className="flex-1 max-w-md mx-8">
+        <div className="relative">
+          <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+          <input
+            type="text"
+            placeholder="Search documents..."
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-docusign-blue focus:border-transparent text-sm"
+            onFocus={(e) => {
+              e.target.select();
+            }}
+          />
         </div>
+      </div>
+
+      {/* Right side - User Actions */}
+      <div className="flex items-center space-x-4">
+        {/* Notifications */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="relative p-2 text-gray-600 hover:text-docusign-blue hover:bg-docusign-light-grey"
+        >
+          <i className="fas fa-bell text-base"></i>
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+            2
+          </span>
+        </Button>
+
+        {/* Help */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="p-2 text-gray-600 hover:text-docusign-blue hover:bg-docusign-light-grey"
+          title="Help & Support"
+        >
+          <i className="fas fa-question-circle text-base"></i>
+        </Button>
+
+        {/* User Menu */}
+        <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="flex items-center space-x-2 p-2 text-gray-600 hover:text-docusign-blue hover:bg-docusign-light-grey"
+            >
+              <div className="w-8 h-8 bg-docusign-blue text-white rounded-full flex items-center justify-center text-sm font-medium">
+                DU
+              </div>
+              <span className="text-sm font-medium text-docusign-charcoal">Demo User</span>
+              <i className="fas fa-chevron-down text-xs"></i>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <i className="fas fa-user mr-2 text-sm"></i>
+                <span>Profile Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <i className="fas fa-cog mr-2 text-sm"></i>
+                <span>Preferences</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <i className="fas fa-credit-card mr-2 text-sm"></i>
+                <span>Billing & Usage</span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <i className="fas fa-question-circle mr-2 text-sm"></i>
+              <span>Help Center</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <i className="fas fa-book mr-2 text-sm"></i>
+              <span>API Documentation</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-red-600">
+              <i className="fas fa-sign-out-alt mr-2 text-sm"></i>
+              <span>Sign Out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

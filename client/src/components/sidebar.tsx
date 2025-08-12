@@ -104,16 +104,51 @@ export default function Sidebar({ documentId, currentPageNumber, onPageSelect }:
       <div className="p-4">
         <h3 className="text-sm font-semibold text-docusign-charcoal mb-3 uppercase tracking-wide">Actions</h3>
         <div className="space-y-1">
-          <button className="w-full text-left p-2 text-sm text-docusign-charcoal hover:bg-docusign-light-grey rounded transition-colors">
+          <button 
+            className="w-full text-left p-2 text-sm text-docusign-charcoal hover:bg-docusign-light-grey rounded transition-colors"
+            onClick={() => {
+              const selection = window.getSelection()?.toString();
+              if (selection) {
+                navigator.clipboard.writeText(selection);
+              }
+            }}
+          >
             <i className="fas fa-copy mr-3 text-xs"></i>Copy Text
           </button>
-          <button className="w-full text-left p-2 text-sm text-docusign-charcoal hover:bg-docusign-light-grey rounded transition-colors">
+          <button 
+            className="w-full text-left p-2 text-sm text-docusign-charcoal hover:bg-docusign-light-grey rounded transition-colors"
+            onClick={async () => {
+              try {
+                const copiedText = await navigator.clipboard.readText();
+                const copiedParagraph = localStorage.getItem('copiedParagraph');
+                if (copiedParagraph) {
+                  const parsed = JSON.parse(copiedParagraph);
+                  // Could implement paragraph pasting here
+                  alert(`Pasted: ${parsed.content.slice(0, 50)}...`);
+                }
+              } catch (err) {
+                console.log('Clipboard access denied');
+              }
+            }}
+          >
             <i className="fas fa-paste mr-3 text-xs"></i>Paste
           </button>
-          <button className="w-full text-left p-2 text-sm text-docusign-charcoal hover:bg-docusign-light-grey rounded transition-colors">
+          <button 
+            className="w-full text-left p-2 text-sm text-docusign-charcoal hover:bg-docusign-light-grey rounded transition-colors"
+            onClick={() => {
+              if (window.history.length > 1) {
+                window.history.back();
+              }
+            }}
+          >
             <i className="fas fa-undo mr-3 text-xs"></i>Undo
           </button>
-          <button className="w-full text-left p-2 text-sm text-docusign-charcoal hover:bg-docusign-light-grey rounded transition-colors">
+          <button 
+            className="w-full text-left p-2 text-sm text-docusign-charcoal hover:bg-docusign-light-grey rounded transition-colors"
+            onClick={() => {
+              window.history.forward();
+            }}
+          >
             <i className="fas fa-redo mr-3 text-xs"></i>Redo
           </button>
         </div>

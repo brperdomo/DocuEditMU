@@ -38,18 +38,59 @@ export default function DocumentViewer({
     .sort((a, b) => a.orderIndex - b.orderIndex);
 
   const handleFormatting = (action: string) => {
-    // TODO: Implement text formatting
-    console.log('Format action:', action);
+    if (!selectedParagraphId) return;
+    
+    const selectedParagraph = paragraphs.find(p => p.id === selectedParagraphId);
+    if (!selectedParagraph) return;
+
+    let formattedContent = selectedParagraph.content;
+    
+    switch (action) {
+      case 'bold':
+        formattedContent = `**${formattedContent}**`;
+        break;
+      case 'italic':
+        formattedContent = `*${formattedContent}*`;
+        break;
+      case 'underline':
+        formattedContent = `<u>${formattedContent}</u>`;
+        break;
+    }
+    
+    // Update the paragraph with formatted content
+    fetch(`/api/paragraphs/${selectedParagraphId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: formattedContent })
+    });
   };
 
   const handleCopyParagraph = () => {
-    // TODO: Implement copy functionality
-    console.log('Copy paragraph');
+    if (!selectedParagraphId) return;
+    
+    const selectedParagraph = paragraphs.find(p => p.id === selectedParagraphId);
+    if (!selectedParagraph) return;
+    
+    // Store in clipboard and localStorage
+    navigator.clipboard.writeText(selectedParagraph.content);
+    localStorage.setItem('copiedParagraph', JSON.stringify({
+      content: selectedParagraph.content,
+      timestamp: Date.now()
+    }));
   };
 
   const handleDeleteParagraph = () => {
-    // TODO: Implement delete functionality
-    console.log('Delete paragraph');
+    if (!selectedParagraphId) return;
+    
+    if (confirm('Are you sure you want to delete this paragraph?')) {
+      fetch(`/api/paragraphs/${selectedParagraphId}`, {
+        method: 'DELETE'
+      }).then(() => {
+        setSelectedParagraphId(null);
+        // Refresh data
+        window.location.reload();
+      });
+    }
   };
 
   return (
