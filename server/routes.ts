@@ -2,8 +2,21 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertDocumentSchema, insertDocumentPageSchema, insertParagraphSchema } from "@shared/schema";
+import path from "path";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // Serve PDF.js worker to avoid CORS issues
+  app.get("/pdf.worker.min.js", (req, res) => {
+    try {
+      const workerPath = path.join(__dirname, '../node_modules/pdfjs-dist/build/pdf.worker.min.js');
+      res.setHeader('Content-Type', 'application/javascript');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.sendFile(workerPath);
+    } catch (error) {
+      res.status(404).send('PDF worker not found');
+    }
+  });
   
   // Health check endpoint for deployment platforms
   app.get("/api/health", (req, res) => {
