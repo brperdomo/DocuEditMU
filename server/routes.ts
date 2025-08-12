@@ -1,7 +1,13 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 import { storage } from "./storage";
 import { insertDocumentSchema, insertDocumentPageSchema, insertParagraphSchema } from "@shared/schema";
+
+// Get __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 import path from "path";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -165,6 +171,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
+  });
+
+  // Serve the PDF worker from the same origin to avoid CORS issues
+  app.get('/pdf.worker.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript');
+    res.setHeader('Cache-Control', 'public, max-age=31536000');
+    res.sendFile(join(__dirname, 'pdf-worker.js'));
   });
 
   const httpServer = createServer(app);

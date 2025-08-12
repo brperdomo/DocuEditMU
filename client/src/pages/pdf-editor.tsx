@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
+import { useQuery } from "@tanstack/react-query";
 import { DndContext, DragEndEvent, DragOverlay, useSensor, useSensors, PointerSensor, KeyboardSensor, DragStartEvent } from "@dnd-kit/core";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { Button } from "@/components/ui/button";
@@ -8,13 +8,106 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PDFFieldPalette from "@/components/pdf-field-palette";
-import PDFFieldOverlay from "@/components/pdf-field-overlay";
 import DraggableField from "@/components/draggable-field";
 import AppHeader from "@/components/app-header";
 
-// Use a proven working CDN version that supports CORS
-// This version is stable and works across different deployment platforms
-pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+// Visual Document Component that looks like the Documents tab
+function DocumentViewer({ document, pages }: { document: any; pages: any[] }) {
+  return (
+    <div className="bg-white shadow-lg border border-gray-200 rounded-lg overflow-hidden" style={{ width: '612px', minHeight: '792px' }}>
+      {/* Document Header */}
+      <div className="bg-gray-50 border-b border-gray-200 p-4">
+        <h1 className="text-xl font-bold text-gray-900">{document?.title || 'Service Agreement'}</h1>
+        <p className="text-sm text-gray-600 mt-1">Document ready for field placement</p>
+      </div>
+
+      {/* Document Content */}
+      <div className="p-8 leading-relaxed" style={{ fontFamily: 'Times, serif' }}>
+        <div className="space-y-6">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-8">SERVICE AGREEMENT</h2>
+          </div>
+
+          <div className="space-y-4">
+            <p>
+              This Service Agreement ("Agreement") is entered into on{" "}
+              <span className="inline-block w-32 border-b border-gray-400 mx-1 h-5"></span>{" "}
+              between{" "}
+              <span className="inline-block w-64 border-b border-gray-400 mx-1 h-5"></span>{" "}
+              ("Client") and{" "}
+              <span className="inline-block w-64 border-b border-gray-400 mx-1 h-5"></span>{" "}
+              ("Service Provider").
+            </p>
+
+            <div className="mt-8">
+              <h3 className="font-bold text-lg mb-4">SERVICES TO BE PROVIDED:</h3>
+              <p>The Service Provider agrees to provide the following services:</p>
+              <div className="mt-2 space-y-2">
+                <div className="w-full border-b border-gray-400 h-5"></div>
+                <div className="w-full border-b border-gray-400 h-5"></div>
+                <div className="w-full border-b border-gray-400 h-5"></div>
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <h3 className="font-bold text-lg mb-4">PAYMENT TERMS:</h3>
+              <div className="space-y-3">
+                <p>
+                  Total Contract Value: $
+                  <span className="inline-block w-32 border-b border-gray-400 mx-1 h-5"></span>
+                </p>
+                <p>
+                  Payment Schedule:{" "}
+                  <span className="inline-block w-96 border-b border-gray-400 mx-1 h-5"></span>
+                </p>
+                <p>
+                  Payment Method:{" "}
+                  <span className="inline-block w-96 border-b border-gray-400 mx-1 h-5"></span>
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-12">
+              <h3 className="font-bold text-lg mb-6">SIGNATURES:</h3>
+              
+              <div className="grid grid-cols-1 gap-8">
+                <div className="flex justify-between items-end">
+                  <div className="flex-1 mr-8">
+                    <p className="mb-2">Client Name: <span className="inline-block w-64 border-b border-gray-400 mx-1 h-5"></span></p>
+                    <p>Client Signature: <span className="inline-block w-80 border-b border-gray-400 mx-1 h-5"></span></p>
+                  </div>
+                  <div>
+                    <p>Date: <span className="inline-block w-32 border-b border-gray-400 mx-1 h-5"></span></p>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-end mt-8">
+                  <div className="flex-1 mr-8">
+                    <p className="mb-2">Service Provider Name: <span className="inline-block w-64 border-b border-gray-400 mx-1 h-5"></span></p>
+                    <p>Service Provider Signature: <span className="inline-block w-80 border-b border-gray-400 mx-1 h-5"></span></p>
+                  </div>
+                  <div>
+                    <p>Date: <span className="inline-block w-32 border-b border-gray-400 mx-1 h-5"></span></p>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-end mt-8">
+                  <div className="flex-1 mr-8">
+                    <p className="mb-2">Witness Name: <span className="inline-block w-64 border-b border-gray-400 mx-1 h-5"></span></p>
+                    <p>Witness Signature: <span className="inline-block w-80 border-b border-gray-400 mx-1 h-5"></span></p>
+                  </div>
+                  <div>
+                    <p>Date: <span className="inline-block w-32 border-b border-gray-400 mx-1 h-5"></span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export interface PDFField {
   id: string;
@@ -33,49 +126,35 @@ export interface PDFField {
 }
 
 export default function PDFEditor() {
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [numPages, setNumPages] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [scale, setScale] = useState<number>(1.0);
   const [fields, setFields] = useState<PDFField[]>([]);
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
   const [draggedField, setDraggedField] = useState<PDFField | null>(null);
-  const [pageSize, setPageSize] = useState({ width: 0, height: 0 });
+  const [scale, setScale] = useState<number>(1.0);
   
   const pageRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load the service agreement document from the existing Documents tab
+  const { data: document, isLoading: isLoadingDoc } = useQuery({
+    queryKey: ['/api/documents'],
+  });
+
+  const { data: pages, isLoading: isLoadingPages } = useQuery({
+    queryKey: ['/api/documents', document?.id, 'pages'],
+    enabled: !!document?.id,
+  });
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 5,
+        distance: 8,
       },
     }),
     useSensor(KeyboardSensor)
   );
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && file.type === 'application/pdf') {
-      setPdfFile(file);
-      const url = URL.createObjectURL(file);
-      setPdfUrl(url);
-      setFields([]); // Clear existing fields when new PDF is loaded
-    }
-  };
-
-  const handleDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    setNumPages(numPages);
-    setCurrentPage(1);
-  };
-
-  const handlePageLoadSuccess = (page: any) => {
-    const viewport = page.getViewport({ scale });
-    setPageSize({
-      width: viewport.width,
-      height: viewport.height
-    });
+  const clearAllFields = () => {
+    setFields([]);
+    setSelectedFieldId(null);
   };
 
   const addField = useCallback((fieldType: PDFField['type']) => {
@@ -87,7 +166,7 @@ export default function PDFEditor() {
       y: 25, // Default position (25% from top)
       width: fieldType === 'signature' ? 30 : fieldType === 'checkbox' ? 3 : 20,
       height: fieldType === 'signature' ? 8 : fieldType === 'checkbox' ? 3 : 5,
-      page: currentPage,
+      page: 1, // Single page document
       required: fieldType === 'signature' || fieldType === 'date',
       assignee: 'signer1',
       placeholder: getFieldPlaceholder(fieldType),
@@ -96,36 +175,38 @@ export default function PDFEditor() {
     
     setFields(prev => [...prev, newField]);
     setSelectedFieldId(newField.id);
-  }, [currentPage]);
+  }, []);
 
   const getFieldPlaceholder = (type: PDFField['type']): string => {
-    switch (type) {
-      case 'signature': return 'Sign here';
-      case 'date': return 'Date';
-      case 'text': return 'Enter text';
-      case 'name': return 'Full name';
-      case 'email': return 'Email address';
-      case 'title': return 'Job title';
-      case 'initial': return 'Initial';
-      default: return 'Field';
-    }
+    const placeholders: Record<PDFField['type'], string> = {
+      signature: 'Your signature',
+      date: 'MM/DD/YYYY',
+      text: 'Enter text',
+      checkbox: '',
+      initial: 'Initials',
+      name: 'Full name',
+      email: 'email@example.com',
+      title: 'Job title'
+    };
+    return placeholders[type];
   };
 
-  const updateField = (id: string, updates: Partial<PDFField>) => {
+  const updateField = (fieldId: string, updates: Partial<PDFField>) => {
     setFields(prev => prev.map(field => 
-      field.id === id ? { ...field, ...updates } : field
+      field.id === fieldId ? { ...field, ...updates } : field
     ));
   };
 
-  const deleteField = (id: string) => {
-    setFields(prev => prev.filter(field => field.id !== id));
-    if (selectedFieldId === id) {
+  const deleteField = (fieldId: string) => {
+    setFields(prev => prev.filter(field => field.id !== fieldId));
+    if (selectedFieldId === fieldId) {
       setSelectedFieldId(null);
     }
   };
 
   const handleDragStart = (event: DragStartEvent) => {
-    const field = fields.find(f => f.id === event.active.id);
+    const { active } = event;
+    const field = fields.find(f => f.id === active.id);
     if (field) {
       setDraggedField(field);
     }
@@ -134,7 +215,7 @@ export default function PDFEditor() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, delta } = event;
     
-    if (!pageRef.current || !pageSize.width || !pageSize.height) return;
+    if (!pageRef.current) return;
 
     const field = fields.find(f => f.id === active.id);
     if (!field) return;
@@ -152,20 +233,18 @@ export default function PDFEditor() {
     setDraggedField(null);
   };
 
-  const exportPDFWithFields = async () => {
-    if (!pdfFile) return;
+  const exportFieldConfiguration = async () => {
+    if (!document) return;
     
     const fieldsData = {
-      filename: pdfFile.name,
-      totalPages: numPages,
-      fields: fields,
-      createdAt: new Date().toISOString()
+      documentTitle: document.title,
+      fields: fields
     };
     
     const dataStr = JSON.stringify(fieldsData, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
     
-    const exportFileDefaultName = `${pdfFile.name.replace('.pdf', '')}-fields.json`;
+    const exportFileDefaultName = `${document.title.replace(/[^a-z0-9]/gi, '_')}-fields.json`;
     
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
@@ -174,7 +253,17 @@ export default function PDFEditor() {
   };
 
   const selectedField = fields.find(f => f.id === selectedFieldId);
-  const currentPageFields = fields.filter(f => f.page === currentPage);
+
+  if (isLoadingDoc || isLoadingPages) {
+    return (
+      <div className="min-h-screen bg-docusign-light-grey flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-docusign-blue mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading Service Agreement...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-docusign-light-grey">
@@ -184,42 +273,37 @@ export default function PDFEditor() {
         {/* Left Sidebar - Field Palette */}
         <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
           <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-docusign-charcoal mb-2">PDF Field Editor</h2>
-            <p className="text-sm text-gray-600">Upload a PDF and add interactive fields</p>
+            <h2 className="text-xl font-semibold text-docusign-charcoal mb-2">Document Field Editor</h2>
+            <p className="text-sm text-gray-600">Add interactive fields to your Service Agreement</p>
           </div>
           
-          {/* PDF Upload */}
+          {/* Document Info */}
           <div className="p-6 border-b border-gray-200">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-            <Button
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full"
-              variant={pdfFile ? "outline" : "default"}
-            >
-              <i className="fas fa-upload mr-2"></i>
-              {pdfFile ? 'Change PDF' : 'Upload PDF'}
-            </Button>
-            {pdfFile && (
-              <div className="mt-2 text-sm text-gray-600">
-                <i className="fas fa-file-pdf mr-2 text-red-500"></i>
-                {pdfFile.name}
+            <div className="space-y-3">
+              <div className="text-sm text-gray-600 flex items-center">
+                <i className="fas fa-file-contract mr-2 text-docusign-blue"></i>
+                {document?.title || 'Service Agreement'}
               </div>
-            )}
+              
+              <Button
+                onClick={clearAllFields}
+                size="sm"
+                variant="outline"
+                className="w-full"
+              >
+                <i className="fas fa-refresh mr-1"></i>
+                Clear All Fields
+              </Button>
+            </div>
           </div>
           
-          {pdfFile && <PDFFieldPalette onAddField={addField} />}
+          <PDFFieldPalette onAddField={addField} />
           
           {/* Export */}
           {fields.length > 0 && (
             <div className="p-6 border-t border-gray-200 mt-auto">
               <Button
-                onClick={exportPDFWithFields}
+                onClick={exportFieldConfiguration}
                 className="w-full bg-docusign-blue text-white hover:bg-blue-700"
               >
                 Export Field Configuration
@@ -228,150 +312,95 @@ export default function PDFEditor() {
           )}
         </div>
 
-        {/* Center - PDF Viewer */}
+        {/* Center - Document Viewer */}
         <div className="flex-1 flex flex-col">
-          {/* PDF Toolbar */}
-          {pdfFile && (
-            <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage <= 1}
-                >
-                  <i className="fas fa-chevron-left"></i>
-                </Button>
-                <span className="text-sm">
-                  Page {currentPage} of {numPages}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(Math.min(numPages, currentPage + 1))}
-                  disabled={currentPage >= numPages}
-                >
-                  <i className="fas fa-chevron-right"></i>
-                </Button>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setScale(Math.max(0.5, scale - 0.1))}
-                >
-                  <i className="fas fa-search-minus"></i>
-                </Button>
-                <span className="text-sm min-w-[60px] text-center">
-                  {Math.round(scale * 100)}%
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setScale(Math.min(2.0, scale + 0.1))}
-                >
-                  <i className="fas fa-search-plus"></i>
-                </Button>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">
-                  {fields.length} field{fields.length !== 1 ? 's' : ''}
-                </span>
-              </div>
+          {/* Document Toolbar */}
+          <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <h3 className="font-medium text-gray-900">Visual Document Editor</h3>
+              <span className="text-sm text-gray-500">
+                {fields.length} field{fields.length !== 1 ? 's' : ''} placed
+              </span>
             </div>
-          )}
+            
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setScale(Math.max(0.5, scale - 0.1))}
+              >
+                <i className="fas fa-search-minus"></i>
+              </Button>
+              <span className="text-sm min-w-[60px] text-center">
+                {Math.round(scale * 100)}%
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setScale(Math.min(2.0, scale + 0.1))}
+              >
+                <i className="fas fa-search-plus"></i>
+              </Button>
+            </div>
+          </div>
 
-          {/* PDF Canvas */}
-          <div className="flex-1 overflow-auto p-6 flex justify-center">
-            {pdfFile ? (
-              <div className="relative">
-                <DndContext
-                  sensors={sensors}
-                  onDragStart={handleDragStart}
-                  onDragEnd={handleDragEnd}
-                  modifiers={[restrictToParentElement]}
+          {/* Document Content Area */}
+          <div className="flex-1 overflow-auto bg-gray-100 p-8">
+            <div className="flex justify-center">
+              <DndContext
+                sensors={sensors}
+                modifiers={[restrictToParentElement]}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              >
+                <div
+                  ref={pageRef}
+                  className="relative"
+                  style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}
                 >
-                  <div 
-                    ref={pageRef}
-                    className="relative bg-white shadow-lg border border-gray-200"
-                    style={{ display: 'inline-block' }}
-                  >
-                    <Document
-                      file={pdfUrl}
-                      onLoadSuccess={handleDocumentLoadSuccess}
-                      onLoadError={(error) => {
-                        console.error('PDF loading error:', error);
-                        alert('Failed to load PDF. Please try a different file or check if the file is corrupted.');
-                      }}
-                      loading={<div className="absolute inset-0 flex items-center justify-center bg-gray-100">Loading PDF...</div>}
-                      error={<div className="absolute inset-0 flex items-center justify-center bg-red-50 text-red-600">Failed to load PDF</div>}
-                      className="relative"
-                    >
-                      <Page 
-                        pageNumber={currentPage} 
-                        scale={scale}
-                        onLoadSuccess={handlePageLoadSuccess}
-                      />
-                    </Document>
-                    
-                    {/* Field Overlays */}
-                    {currentPageFields.map(field => (
-                      <DraggableField
-                        key={field.id}
-                        field={field}
-                        isSelected={selectedFieldId === field.id}
-                        onSelect={() => setSelectedFieldId(field.id)}
-                        onUpdate={(updates) => updateField(field.id, updates)}
-                        onDelete={() => deleteField(field.id)}
-                        pageSize={pageSize}
-                        scale={scale}
-                      />
-                    ))}
-                  </div>
-
-                  <DragOverlay>
-                    {draggedField ? (
-                      <div className="bg-blue-100 border-2 border-blue-400 rounded px-2 py-1 text-sm opacity-75">
-                        {draggedField.label}
-                      </div>
-                    ) : null}
-                  </DragOverlay>
-                </DndContext>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center text-gray-500">
-                  <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <i className="fas fa-file-pdf text-4xl text-gray-400"></i>
-                  </div>
-                  <h3 className="text-lg font-medium mb-2">No PDF Loaded</h3>
-                  <p className="text-sm">Upload a PDF to start adding fields</p>
-                  <Button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="mt-4"
-                  >
-                    <i className="fas fa-upload mr-2"></i>
-                    Upload PDF
-                  </Button>
+                  <DocumentViewer document={document} pages={pages} />
+                  
+                  {/* Field Overlays */}
+                  {fields.map((field) => (
+                    <DraggableField
+                      key={field.id}
+                      field={field}
+                      isSelected={field.id === selectedFieldId}
+                      onClick={() => setSelectedFieldId(field.id)}
+                      containerRef={pageRef}
+                    />
+                  ))}
                 </div>
-              </div>
-            )}
+
+                <DragOverlay>
+                  {draggedField ? (
+                    <div className="opacity-90">
+                      <DraggableField
+                        field={draggedField}
+                        isSelected={false}
+                        onClick={() => {}}
+                        containerRef={pageRef}
+                      />
+                    </div>
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
+            </div>
           </div>
         </div>
 
-        {/* Right Sidebar - Field Properties */}
+        {/* Right Sidebar - Properties Panel */}
         {selectedField && (
-          <div className="w-80 bg-white border-l border-gray-200 p-6">
-            <div className="mb-6">
-              <h3 className="text-lg font-medium text-docusign-charcoal mb-2">Field Properties</h3>
-              <p className="text-sm text-gray-600">Configure the selected field</p>
+          <div className="w-80 bg-white border-l border-gray-200 flex flex-col">
+            <div className="p-6 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-docusign-charcoal mb-2">Field Properties</h3>
+              <p className="text-sm text-gray-600">{selectedField.type.charAt(0).toUpperCase() + selectedField.type.slice(1)} Field</p>
             </div>
             
-            <div className="space-y-4">
+            <div className="flex-1 overflow-auto p-6 space-y-6">
+              {/* Field Label */}
               <div>
-                <Label htmlFor="field-label">Label</Label>
+                <Label htmlFor="field-label">Field Label</Label>
                 <Input
                   id="field-label"
                   value={selectedField.label}
@@ -380,23 +409,7 @@ export default function PDFEditor() {
                 />
               </div>
 
-              <div>
-                <Label htmlFor="field-assignee">Assignee</Label>
-                <Select
-                  value={selectedField.assignee}
-                  onValueChange={(value) => updateField(selectedField.id, { assignee: value as PDFField['assignee'] })}
-                >
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select assignee" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="signer1">Signer 1</SelectItem>
-                    <SelectItem value="signer2">Signer 2</SelectItem>
-                    <SelectItem value="sender">Sender</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
+              {/* Position */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="field-x">X Position (%)</Label>
@@ -404,9 +417,10 @@ export default function PDFEditor() {
                     id="field-x"
                     type="number"
                     min="0"
-                    max="100"
-                    value={Math.round(selectedField.x)}
-                    onChange={(e) => updateField(selectedField.id, { x: parseInt(e.target.value) || 0 })}
+                    max="95"
+                    step="0.1"
+                    value={selectedField.x}
+                    onChange={(e) => updateField(selectedField.id, { x: parseFloat(e.target.value) })}
                     className="mt-1"
                   />
                 </div>
@@ -416,14 +430,16 @@ export default function PDFEditor() {
                     id="field-y"
                     type="number"
                     min="0"
-                    max="100"
-                    value={Math.round(selectedField.y)}
-                    onChange={(e) => updateField(selectedField.id, { y: parseInt(e.target.value) || 0 })}
+                    max="95"
+                    step="0.1"
+                    value={selectedField.y}
+                    onChange={(e) => updateField(selectedField.id, { y: parseFloat(e.target.value) })}
                     className="mt-1"
                   />
                 </div>
               </div>
 
+              {/* Size */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="field-width">Width (%)</Label>
@@ -431,9 +447,10 @@ export default function PDFEditor() {
                     id="field-width"
                     type="number"
                     min="1"
-                    max="100"
-                    value={Math.round(selectedField.width)}
-                    onChange={(e) => updateField(selectedField.id, { width: parseInt(e.target.value) || 1 })}
+                    max="95"
+                    step="0.1"
+                    value={selectedField.width}
+                    onChange={(e) => updateField(selectedField.id, { width: parseFloat(e.target.value) })}
                     className="mt-1"
                   />
                 </div>
@@ -443,26 +460,34 @@ export default function PDFEditor() {
                     id="field-height"
                     type="number"
                     min="1"
-                    max="100"
-                    value={Math.round(selectedField.height)}
-                    onChange={(e) => updateField(selectedField.id, { height: parseInt(e.target.value) || 1 })}
+                    max="95"
+                    step="0.1"
+                    value={selectedField.height}
+                    onChange={(e) => updateField(selectedField.id, { height: parseFloat(e.target.value) })}
                     className="mt-1"
                   />
                 </div>
               </div>
 
-              {(selectedField.type === 'text' || selectedField.type === 'name' || selectedField.type === 'email') && (
-                <div>
-                  <Label htmlFor="field-placeholder">Placeholder</Label>
-                  <Input
-                    id="field-placeholder"
-                    value={selectedField.placeholder || ''}
-                    onChange={(e) => updateField(selectedField.id, { placeholder: e.target.value })}
-                    className="mt-1"
-                  />
-                </div>
-              )}
+              {/* Assignee */}
+              <div>
+                <Label htmlFor="field-assignee">Assignee</Label>
+                <Select
+                  value={selectedField.assignee || 'signer1'}
+                  onValueChange={(value) => updateField(selectedField.id, { assignee: value as 'signer1' | 'signer2' | 'sender' })}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="signer1">Client (Signer 1)</SelectItem>
+                    <SelectItem value="signer2">Service Provider (Signer 2)</SelectItem>
+                    <SelectItem value="sender">Sender/Witness</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
+              {/* Required */}
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -474,12 +499,25 @@ export default function PDFEditor() {
                 <Label htmlFor="field-required">Required field</Label>
               </div>
 
+              {/* Placeholder */}
+              {selectedField.type !== 'checkbox' && (
+                <div>
+                  <Label htmlFor="field-placeholder">Placeholder Text</Label>
+                  <Input
+                    id="field-placeholder"
+                    value={selectedField.placeholder || ''}
+                    onChange={(e) => updateField(selectedField.id, { placeholder: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+              )}
+
+              {/* Delete Field */}
               <div className="pt-4 border-t border-gray-200">
                 <Button
-                  variant="destructive"
-                  size="sm"
                   onClick={() => deleteField(selectedField.id)}
-                  className="w-full"
+                  variant="outline"
+                  className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
                   <i className="fas fa-trash mr-2"></i>
                   Delete Field

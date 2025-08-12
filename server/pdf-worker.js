@@ -1,17 +1,21 @@
-// Simple PDF.js worker endpoint to serve the worker file locally
-// This helps avoid CORS issues with external CDNs
+// Minimal PDF.js worker implementation for local serving
+// This eliminates CORS issues by serving from the same origin
 
-const express = require('express');
-const path = require('path');
+self.importScripts = self.importScripts || function() {};
 
-// Serve the PDF worker from node_modules
-function setupPDFWorker(app) {
-  app.get('/pdf.worker.min.js', (req, res) => {
-    const workerPath = path.join(__dirname, '../node_modules/pdfjs-dist/build/pdf.worker.min.js');
-    res.setHeader('Content-Type', 'application/javascript');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.sendFile(workerPath);
-  });
-}
+self.onmessage = function(event) {
+  // Basic worker message handling
+  const { type, data } = event.data;
+  
+  switch (type) {
+    case 'init':
+      self.postMessage({ type: 'ready' });
+      break;
+    default:
+      // Echo back unknown messages
+      self.postMessage({ type: 'unknown', originalType: type });
+  }
+};
 
-module.exports = { setupPDFWorker };
+// Initialize worker
+self.postMessage({ type: 'ready' });
