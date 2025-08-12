@@ -1,0 +1,61 @@
+Warning: Setting up fake worker.
+react-pdf.js?v=81c79956:12471  GET https://1bd62d6d-6103-431c-bb63-9f8494a4c2e3-00-29cxcldtyxioe.worf.replit.dev/pdf.worker.min.js?import net::ERR_ABORTED 404 (Not Found)
+loader @ react-pdf.js?v=81c79956:12471
+get _setupFakeWorkerGlobal @ react-pdf.js?v=81c79956:12475
+setupFakeWorker_fn @ react-pdf.js?v=81c79956:12572
+terminateEarly @ react-pdf.js?v=81c79956:12522
+worker.addEventListener.signal @ react-pdf.js?v=81c79956:12528Understand this error
+Console.js:61 Warning: Error: Setting up fake worker failed: "Failed to fetch dynamically imported module: https://1bd62d6d-6103-431c-bb63-9f8494a4c2e3-00-29cxcldtyxioe.worf.replit.dev/pdf.worker.min.js?import".
+Mt.forEach.n.<computed> @ Console.js:61
+printWarning2 @ react-pdf.js?v=81c79956:41
+warning9 @ react-pdf.js?v=81c79956:60
+onLoadError @ react-pdf.js?v=81c79956:23647
+(anonymous) @ react-pdf.js?v=81c79956:23685
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=81c79956:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=81c79956:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=81c79956:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=81c79956:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=81c79956:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=81c79956:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=81c79956:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=81c79956:19328
+workLoop @ chunk-RPCDYKBN.js?v=81c79956:197
+flushWork @ chunk-RPCDYKBN.js?v=81c79956:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=81c79956:384Understand this error
+_app-3381936f526795e0.js:13  POST https://logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Afetch%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A585a810c&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=8b4ddef0-4fbe-4046-afd8-278ad28a8b12 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ _app-3381936f526795e0.js:13
+a @ _app-3381936f526795e0.js:40
+m @ _app-3381936f526795e0.js:40
+g @ _app-3381936f526795e0.js:40
+send @ _app-3381936f526795e0.js:40
+e.flush @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+e.notify @ _app-3381936f526795e0.js:15
+f @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+d @ _app-3381936f526795e0.js:1
+(anonymous) @ _app-3381936f526795e0.js:1
+n @ _app-3381936f526795e0.js:13Understand this error
+_app-3381936f526795e0.js:13  POST https://logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Axhr%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A585a810c&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=5576ee3b-04f6-4015-b8e5-affc8c137526 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ _app-3381936f526795e0.js:13
+(anonymous) @ _app-3381936f526795e0.js:13
+S @ _app-3381936f526795e0.js:40
+(anonymous) @ _app-3381936f526795e0.js:40
+d @ _app-3381936f526795e0.js:1
+(anonymous) @ _app-3381936f526795e0.js:1
+Promise.then
+a @ _app-3381936f526795e0.js:40
+m @ _app-3381936f526795e0.js:40
+g @ _app-3381936f526795e0.js:40
+send @ _app-3381936f526795e0.js:40
+e.flush @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+e.notify @ _app-3381936f526795e0.js:15
+f @ _app-3381936f526795e0.js:15
+(anonymous) @ _app-3381936f526795e0.js:15
+d @ _app-3381936f526795e0.js:1
+(anonymous) @ _app-3381936f526795e0.js:1
+n @ _app-3381936f526795e0.js:13Understand this error
+_app-3381936f526795e0.js:13 XHR finished loading: POST "https://events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820".

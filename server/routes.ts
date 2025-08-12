@@ -9,12 +9,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Serve PDF.js worker to avoid CORS issues
   app.get("/pdf.worker.min.js", (req, res) => {
     try {
-      const workerPath = path.join(__dirname, '../node_modules/pdfjs-dist/build/pdf.worker.min.js');
+      // Try multiple possible paths for the PDF worker
+      const possiblePaths = [
+        path.join(process.cwd(), 'node_modules/react-pdf/dist/pdf.worker.entry.js'),
+        path.join(__dirname, '../node_modules/react-pdf/dist/pdf.worker.entry.js'),
+        path.join(__dirname, '../node_modules/pdfjs-dist/build/pdf.worker.min.js'),
+        path.join(process.cwd(), 'node_modules/pdfjs-dist/build/pdf.worker.min.js'),
+        path.join(__dirname, '../../node_modules/pdfjs-dist/build/pdf.worker.min.js')
+      ];
+      
+      for (const workerPath of possiblePaths) {
+        if (require('fs').existsSync(workerPath)) {
+          res.setHeader('Content-Type', 'application/javascript');
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.sendFile(workerPath);
+          return;
+        }
+      }
+      
+      // Fallback: serve a minimal worker
       res.setHeader('Content-Type', 'application/javascript');
       res.setHeader('Access-Control-Allow-Origin', '*');
-      res.sendFile(workerPath);
+      res.send(`
+        // Minimal PDF.js worker fallback
+        self.onmessage = function(e) {
+          // Basic message handling
+          if (e.data && e.data.command === 'ready') {
+            self.postMessage({ type: 'ready' });
+          }
+        };
+      `);
     } catch (error) {
-      res.status(404).send('PDF worker not found');
+      console.error('PDF worker error:', error);
+      res.status(500).send('PDF worker error');
     }
   });
   

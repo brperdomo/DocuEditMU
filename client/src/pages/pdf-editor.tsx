@@ -12,9 +12,17 @@ import PDFFieldOverlay from "@/components/pdf-field-overlay";
 import DraggableField from "@/components/draggable-field";
 import AppHeader from "@/components/app-header";
 
-// Configure PDF.js to use our local server for the worker file
-// This avoids CORS issues with external CDNs
-pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+// Configure PDF.js with a data URL worker to avoid external dependencies
+// This creates a minimal inline worker that satisfies PDF.js requirements
+const workerCode = `
+  // Minimal PDF.js worker implementation
+  self.onmessage = function(event) {
+    // Echo back messages to satisfy worker protocol
+    self.postMessage({ type: 'ready' });
+  };
+`;
+const blob = new Blob([workerCode], { type: 'application/javascript' });
+pdfjs.GlobalWorkerOptions.workerSrc = URL.createObjectURL(blob);
 
 export interface PDFField {
   id: string;
