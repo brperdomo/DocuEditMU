@@ -70,4 +70,4 @@ Preferred communication style: Simple, everyday language.
 - **TypeScript**: Full TypeScript support across client, server, and shared code
 - **Linting/Formatting**: ESLint and Prettier configurations
 - **Database Management**: Drizzle Kit for migrations and schema management
-- **Replit Integration**: Custom Replit plugins for development environment optimization
+- **Development Tools**: Optimized development environment configuration
